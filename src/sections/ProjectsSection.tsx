@@ -1,7 +1,6 @@
 import { useRef } from 'react'
 import { motion, useScroll, useTransform, type MotionValue } from 'framer-motion'
 import FadeIn from '../components/FadeIn'
-import LiveProjectButton from '../components/LiveProjectButton'
 import p01a from '../Pic_proj/01/port0-6.jpg'
 import p01b from '../Pic_proj/01/port0-5.jpg'
 import p01c from '../Pic_proj/01/port0.jpg'
@@ -100,7 +99,6 @@ function ProjectCard({
                 </h3>
               </div>
             </div>
-            <LiveProjectButton />
           </div>
 
           {/* Bottom image grid */}
