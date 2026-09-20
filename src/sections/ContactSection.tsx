@@ -45,7 +45,7 @@ export default function ContactSection() {
       className="px-4 sm:px-8 md:px-10 pt-12 sm:pt-16 md:pt-24 pb-8 sm:pb-10"
       style={{ background: '#0C0C0C' }}
     >
-      <div className="max-w-6xl mx-auto grid gap-8 md:gap-10 lg:gap-16 items-start">
+      <div className="max-w-6xl mx-auto grid gap-8 md:grid-cols-2 md:gap-10 lg:gap-16 items-start">
         {/* Left: heading + direct email */}
         <div>
           <FadeIn delay={0} y={40} duration={0.7}>
