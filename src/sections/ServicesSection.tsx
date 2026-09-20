@@ -66,8 +66,8 @@ function Column({
   items: TimelineItem[]
 }) {
   return (
-    <div className="rounded-[28px] sm:rounded-[36px] border border-[rgba(12,12,12,0.12)] bg-[#F6F6F6] p-8 sm:p-10 md:p-12">
-      <div className="flex items-center gap-4 mb-8 sm:mb-10">
+    <div className="rounded-[24px] sm:rounded-[36px] border border-[rgba(12,12,12,0.12)] bg-[#F6F6F6] p-6 sm:p-10 md:p-12">
+      <div className="flex items-center gap-4 mb-6 sm:mb-10">
         <span className="flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-2xl text-white shrink-0 bg-[#0C0C0C]">
           {icon}
         </span>
@@ -82,7 +82,7 @@ function Column({
       <div className="flex flex-col">
         {items.map((item, i) => (
           <FadeIn key={item.title} delay={i * 0.1} y={24} duration={0.6}>
-            <div className="relative pl-8 sm:pl-10 pb-10 sm:pb-12 last:pb-0">
+            <div className="relative pl-8 sm:pl-10 pb-8 sm:pb-12 last:pb-0">
               {/* timeline line + dot */}
               <span
                 aria-hidden
@@ -143,10 +143,10 @@ export default function ServicesSection() {
   return (
     <section
       id="education"
-      className="px-5 sm:px-8 md:px-10 py-20 sm:py-24 md:py-32 rounded-t-[40px] sm:rounded-t-[50px] md:rounded-t-[60px]"
+      className="px-4 sm:px-8 md:px-10 py-12 sm:py-24 md:py-32 rounded-t-[28px] sm:rounded-t-[50px] md:rounded-t-[60px]"
       style={{ background: '#FFFFFF' }}
     >
-      <div className="max-w-6xl mx-auto grid gap-5 sm:gap-6 md:grid-cols-2 md:gap-8">
+      <div className="max-w-6xl mx-auto grid gap-4 sm:gap-6 md:grid-cols-2 md:gap-8">
         <Column
           icon={<GraduationCap size={26} strokeWidth={2} />}
           heading="Education"

@@ -68,20 +68,20 @@ function ProjectCard({
     <div
       className={
         isLast
-          ? 'h-[85vh] md:h-auto flex items-start justify-center sticky top-24 md:static'
-          : 'h-[85vh] md:h-[140vh] flex items-start justify-center sticky top-24 md:top-4'
+          ? 'h-auto flex items-start justify-center md:static'
+          : 'h-auto md:h-[140vh] flex items-start justify-center md:sticky md:top-4'
       }
     >
       <motion.div
         style={{ scale, top: `${index * 28}px` }}
-        className="relative w-full max-w-6xl rounded-[40px] sm:rounded-[50px] md:rounded-[60px] border-2 border-[#D7E2EA] p-4 sm:p-6 md:p-6"
+        className="relative w-full max-w-6xl rounded-[24px] sm:rounded-[50px] md:rounded-[60px] border-2 border-[#D7E2EA] p-3 sm:p-6 md:p-6"
       >
         <div
-          className="rounded-[32px] sm:rounded-[40px] md:rounded-[48px] p-4 sm:p-6 md:p-6"
+          className="rounded-[20px] sm:rounded-[40px] md:rounded-[48px] p-3 sm:p-6 md:p-6"
           style={{ background: '#0C0C0C' }}
         >
           {/* Top row */}
-          <div className="flex justify-between items-start gap-4 mb-4 sm:mb-6">
+          <div className="flex justify-between items-start gap-3 sm:gap-4 mb-3 sm:mb-6">
             <div className="flex items-start gap-4 sm:gap-8">
               <span
                 className="font-black leading-none text-[#D7E2EA] text-[clamp(3rem,10vw,140px)] md:text-[clamp(2.5rem,10vh,120px)]"
@@ -104,19 +104,19 @@ function ProjectCard({
           </div>
 
           {/* Bottom image grid */}
-          <div className="flex gap-3 sm:gap-4">
-            <div className="w-[40%] flex flex-col gap-3 sm:gap-4">
+          <div className="flex gap-2 sm:gap-4">
+            <div className="w-[40%] flex flex-col gap-2 sm:gap-4">
               <img
                 src={project.col1Image1}
                 alt={`${project.name} preview 1`}
                 loading="lazy"
-                className="w-full object-cover rounded-[40px] sm:rounded-[50px] md:rounded-[60px] h-[clamp(130px,16vw,230px)] md:h-[clamp(150px,22vh,210px)]"
+                className="w-full object-cover rounded-[20px] sm:rounded-[50px] md:rounded-[60px] h-[clamp(110px,16vw,230px)] md:h-[clamp(150px,22vh,210px)]"
               />
               <img
                 src={project.col1Image2}
                 alt={`${project.name} preview 2`}
                 loading="lazy"
-                className="w-full object-cover rounded-[40px] sm:rounded-[50px] md:rounded-[60px] h-[clamp(160px,22vw,340px)] md:h-[clamp(180px,30vh,300px)]"
+                className="w-full object-cover rounded-[20px] sm:rounded-[50px] md:rounded-[60px] h-[clamp(130px,22vw,340px)] md:h-[clamp(180px,30vh,300px)]"
               />
             </div>
             <div className="w-[60%]">
@@ -124,7 +124,7 @@ function ProjectCard({
                 src={project.col2Image}
                 alt={`${project.name} preview 3`}
                 loading="lazy"
-                className="w-full object-cover rounded-[40px] sm:rounded-[50px] md:rounded-[60px] h-[clamp(306px,38vw,586px)] md:h-[calc(clamp(150px,22vh,210px)+clamp(180px,30vh,300px)+16px)]"
+                className="w-full object-cover rounded-[20px] sm:rounded-[50px] md:rounded-[60px] h-[clamp(248px,38vw,586px)] md:h-[calc(clamp(150px,22vh,210px)+clamp(180px,30vh,300px)+16px)]"
               />
             </div>
           </div>
@@ -144,19 +144,19 @@ export default function ProjectsSection() {
   return (
     <section
       id="projects"
-      className="rounded-t-[40px] sm:rounded-t-[50px] md:rounded-t-[60px] -mt-10 sm:-mt-12 md:-mt-14 relative z-10 px-5 sm:px-8 md:px-10 pt-20 sm:pt-24 pb-14 sm:pb-16"
+      className="rounded-t-[28px] sm:rounded-t-[50px] md:rounded-t-[60px] -mt-6 sm:-mt-12 md:-mt-14 relative z-10 px-4 sm:px-8 md:px-10 pt-12 sm:pt-24 pb-10 sm:pb-16"
       style={{ background: '#0C0C0C' }}
     >
       <FadeIn delay={0} y={40} duration={0.7}>
         <h2
-          className="hero-heading font-black uppercase leading-none tracking-tight text-center mb-16 sm:mb-20"
+          className="hero-heading font-black uppercase leading-none tracking-tight text-center mb-8 sm:mb-20"
           style={{ fontSize: 'clamp(3rem, 12vw, 160px)' }}
         >
           Project
         </h2>
       </FadeIn>
 
-      <div ref={containerRef} className="relative">
+      <div ref={containerRef} className="relative flex flex-col gap-5 md:gap-0">
         {PROJECTS.map((project, i) => (
           <ProjectCard
             key={project.number}

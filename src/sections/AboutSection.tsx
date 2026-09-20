@@ -13,7 +13,7 @@ export default function AboutSection() {
   return (
     <section
       id="about"
-      className="relative min-h-screen flex flex-col items-center justify-center px-5 sm:px-8 md:px-10 py-20 gap-10 sm:gap-14 md:gap-16"
+      className="relative flex flex-col items-center justify-center px-5 sm:px-8 md:px-10 py-12 sm:py-20 gap-6 sm:gap-14 md:gap-16"
     >
       {/* Decorative images */}
       <FadeIn
@@ -21,12 +21,12 @@ export default function AboutSection() {
         x={-80}
         y={0}
         duration={0.9}
-        className="absolute top-[4%] left-[1%] sm:left-[2%] md:left-[4%]"
+        className="absolute top-[2%] left-[1%] sm:left-[2%] md:left-[4%]"
       >
         <img
           src={moonIcon}
           alt=""
-          className="w-[120px] sm:w-[160px] md:w-[210px] h-auto"
+          className="w-[72px] sm:w-[160px] md:w-[210px] h-auto"
         />
       </FadeIn>
       <FadeIn
@@ -34,12 +34,12 @@ export default function AboutSection() {
         x={-80}
         y={0}
         duration={0.9}
-        className="absolute bottom-[8%] left-[3%] sm:left-[6%] md:left-[10%]"
+        className="absolute bottom-[4%] left-[3%] sm:left-[6%] md:left-[10%]"
       >
         <img
           src={decorP59}
           alt=""
-          className="w-[100px] sm:w-[140px] md:w-[180px] h-auto"
+          className="w-[64px] sm:w-[140px] md:w-[180px] h-auto"
         />
       </FadeIn>
       <FadeIn
@@ -47,12 +47,12 @@ export default function AboutSection() {
         x={80}
         y={0}
         duration={0.9}
-        className="absolute top-[4%] right-[1%] sm:right-[2%] md:right-[4%]"
+        className="absolute top-[2%] right-[1%] sm:right-[2%] md:right-[4%]"
       >
         <img
           src={legoIcon}
           alt=""
-          className="w-[120px] sm:w-[160px] md:w-[210px] h-auto"
+          className="w-[72px] sm:w-[160px] md:w-[210px] h-auto"
         />
       </FadeIn>
       <FadeIn
@@ -60,12 +60,12 @@ export default function AboutSection() {
         x={80}
         y={0}
         duration={0.9}
-        className="absolute bottom-[8%] right-[3%] sm:right-[6%] md:right-[10%]"
+        className="absolute bottom-[4%] right-[3%] sm:right-[6%] md:right-[10%]"
       >
         <img
           src={decorGroup}
           alt=""
-          className="w-[130px] sm:w-[170px] md:w-[220px] h-auto"
+          className="w-[80px] sm:w-[170px] md:w-[220px] h-auto"
         />
       </FadeIn>
 
@@ -81,7 +81,7 @@ export default function AboutSection() {
 
       {/* Text + button */}
       <div
-        className="flex flex-col items-center gap-16 sm:gap-20 md:gap-24 relative z-10"
+        className="flex flex-col items-center gap-8 sm:gap-20 md:gap-24 relative z-10"
         style={{ fontSize: 'clamp(1rem, 2vw, 1.35rem)' }}
       >
         <AnimatedText

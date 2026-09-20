@@ -48,12 +48,12 @@ export default function CertificateSection() {
   return (
     <section
       id="certificates"
-      className="px-5 sm:px-8 md:px-10 pt-20 sm:pt-24 md:pt-28 pb-20 sm:pb-24"
+      className="px-5 sm:px-8 md:px-10 pt-12 sm:pt-24 md:pt-28 pb-12 sm:pb-24"
       style={{ background: '#0C0C0C' }}
     >
       <FadeIn delay={0} y={40} duration={0.7}>
         <h2
-          className="hero-heading font-black uppercase leading-none tracking-tight text-center mb-12 sm:mb-16"
+          className="hero-heading font-black uppercase leading-none tracking-tight text-center mb-8 sm:mb-16"
           style={{ fontSize: 'clamp(2.5rem, 10vw, 140px)' }}
         >
           Certificates
@@ -65,7 +65,7 @@ export default function CertificateSection() {
           Drop certificate images into src/Pic_cer to display them here
         </p>
       ) : (
-        <div className="flex flex-col gap-3 -mx-5 sm:-mx-8 md:-mx-10">
+        <div className="flex flex-col gap-2 sm:gap-3 -mx-5 sm:-mx-8 md:-mx-10">
           <MarqueeRow images={ROW_1} direction="right" duration="90s" tileClass={TILE} onSelect={handleSelect} />
           <MarqueeRow images={ROW_2} direction="left" duration="110s" tileClass={TILE} onSelect={handleSelect} />
           <MarqueeRow images={ROW_3} direction="right" duration="100s" tileClass={TILE} onSelect={handleSelect} />

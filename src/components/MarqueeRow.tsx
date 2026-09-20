@@ -2,7 +2,7 @@ export default function MarqueeRow({
   images,
   direction,
   duration,
-  tileClass = 'w-[260px] h-[170px] sm:w-[420px] sm:h-[270px]',
+  tileClass = 'w-[200px] h-[130px] sm:w-[420px] sm:h-[270px]',
   onSelect,
 }: {
   images: string[]

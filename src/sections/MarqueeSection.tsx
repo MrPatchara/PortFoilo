@@ -13,10 +13,10 @@ const ROW_2 = [img379903, imgPort02, imgPort4]
 export default function MarqueeSection() {
   return (
     <section
-      className="pt-24 sm:pt-32 md:pt-40 pb-10"
+      className="pt-10 sm:pt-32 md:pt-40 pb-6 sm:pb-10"
       style={{ background: '#0C0C0C' }}
     >
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-2 sm:gap-3">
         <MarqueeRow images={ROW_1} direction="right" duration="55s" />
         <MarqueeRow images={ROW_2} direction="left" duration="65s" />
       </div>

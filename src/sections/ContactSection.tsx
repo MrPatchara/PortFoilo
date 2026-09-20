@@ -42,10 +42,10 @@ export default function ContactSection() {
   return (
     <section
       id="contact"
-      className="px-5 sm:px-8 md:px-10 pt-14 sm:pt-16 md:pt-24 pb-10"
+      className="px-4 sm:px-8 md:px-10 pt-12 sm:pt-16 md:pt-24 pb-8 sm:pb-10"
       style={{ background: '#0C0C0C' }}
     >
-      <div className="max-w-6xl mx-auto grid gap-12 md:grid-cols-2 md:gap-10 lg:gap-16 items-start">
+      <div className="max-w-6xl mx-auto grid gap-8 md:gap-10 lg:gap-16 items-start">
         {/* Left: heading + direct email */}
         <div>
           <FadeIn delay={0} y={40} duration={0.7}>
@@ -145,7 +145,7 @@ export default function ContactSection() {
 
         {/* Right: form card */}
         <FadeIn delay={0.1} y={40} duration={0.7}>
-          <div className="rounded-[28px] border border-white/10 bg-white/[0.04] backdrop-blur p-6 sm:p-8">
+          <div className="rounded-[24px] sm:rounded-[28px] border border-white/10 bg-white/[0.04] backdrop-blur p-5 sm:p-8">
             {status === 'success' ? (
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
@@ -169,7 +169,7 @@ export default function ContactSection() {
                 </button>
               </motion.div>
             ) : (
-              <form ref={formRef} onSubmit={handleSubmit} className="flex flex-col gap-4 sm:gap-5">
+              <form ref={formRef} onSubmit={handleSubmit} className="flex flex-col gap-3 sm:gap-5">
                 <div className="grid sm:grid-cols-2 gap-4 sm:gap-5">
                   <label className="flex flex-col gap-2">
                     <span className="text-[11px] sm:text-xs font-medium uppercase tracking-widest text-[#D7E2EA]/60">
@@ -261,7 +261,7 @@ export default function ContactSection() {
       </div>
 
       {/* Footer */}
-      <footer className="max-w-6xl mx-auto mt-16 sm:mt-20 pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <footer className="max-w-6xl mx-auto mt-10 sm:mt-20 pt-6 sm:pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-3">
         <p className="text-[#D7E2EA]/40 font-light text-xs sm:text-sm uppercase tracking-widest">
           © {new Date().getFullYear()} Patchara Al-umaree
         </p>
