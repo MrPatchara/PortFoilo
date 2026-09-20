@@ -102,7 +102,7 @@ export default async function handler(req: ContactRequest, res: ServerResponse) 
     return;
   }
 
-  const from = process.env.CONTACT_FROM || 'no-reply@tammeuedev.com';
+  const from = process.env.CONTACT_FROM || 'Portfolio <onboarding@resend.dev>';
 
   const subject = subjectText
     ? `[Portfolio] ${subjectText} — จาก ${name || 'ผู้ติดต่อ'}`
