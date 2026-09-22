@@ -2,55 +2,241 @@
 @tailwind components;
 @tailwind utilities;
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-html,
-body,
-#root {
-  background: #0c0c0c;
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  font-family: 'Kanit', sans-serif;
-  background: #0c0c0c;
-  overflow-x: clip;
-}
-
-.hero-heading {
-  background: linear-gradient(180deg, #646973 0%, #bbccd7 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
+/* ------------------------------------------------------------------ *
+ * Keyframes live at the top level so Tailwind never tree-shakes them —
+ * MarqueeRow sets `animation-name` through an inline style.
+ * ------------------------------------------------------------------ */
 @keyframes marquee-left {
   from {
-    transform: translateX(0);
+    transform: translate3d(0, 0, 0);
   }
   to {
-    transform: translateX(-50%);
+    transform: translate3d(-50%, 0, 0);
   }
 }
 
 @keyframes marquee-right {
   from {
-    transform: translateX(-50%);
+    transform: translate3d(-50%, 0, 0);
   }
   to {
-    transform: translateX(0);
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes lightbox-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes lightbox-image {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translate3d(0, 16px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translate3d(0, 0, 0);
+  }
+}
+
+@layer base {
+  :root {
+    --ink: #0c0c0c;
+    --mist: #d7e2ea;
+    --brand: #b600a8;
+    /* Height of the sticky SiteHeader — used for anchor offsets. */
+    --header-h: 60px;
+  }
+
+  @media (min-width: 768px) {
+    :root {
+      --header-h: 72px;
+    }
+  }
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html,
+  body,
+  #root {
+    background: #0c0c0c;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: var(--header-h);
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    font-family: 'Kanit', sans-serif;
+    background: #0c0c0c;
+    color: #d7e2ea;
+    overflow-x: clip;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Anchor targets stop below the sticky header instead of under it. */
+  section[id] {
+    scroll-margin-top: var(--header-h);
+  }
+
+  ::selection {
+    background: #b600a8;
+    color: #fff;
+  }
+
+  :focus-visible {
+    outline: 2px solid #e9a9ff;
+    outline-offset: 3px;
+  }
+}
+
+@layer components {
+  /* ---------------------------------------------------------------- *
+   * Gradient call-to-action — shared by ContactButton, the contact
+   * form submit and the hero CTA (was duplicated as inline styles).
+   * ---------------------------------------------------------------- */
+  .gradient-cta {
+    background: linear-gradient(123deg, #18011f 7%, #b600a8 37%, #7621b0 72%, #be4c00 100%);
+    box-shadow:
+      0px 4px 4px rgba(181, 1, 167, 0.25),
+      inset 4px 4px 12px #7721b1;
+    outline: 2px solid #fff;
+    outline-offset: -3px;
+  }
+
+  .hero-heading {
+    background: linear-gradient(180deg, #646973 0%, #bbccd7 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Outline variant used to break up the repeating gradient headings. */
+  .hero-heading--outline {
+    background: none;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    -webkit-text-stroke: 1.5px #7d8894;
+  }
+
+  @media (min-width: 768px) {
+    .hero-heading--outline {
+      -webkit-text-stroke-width: 2px;
+    }
+  }
+
+  /* ---------------------------------------------------------------- *
+   * Scroll reveal — replaces one framer-motion instance per element
+   * with a CSS transition driven by a shared IntersectionObserver
+   * (see src/lib/reveal.ts). Same API, no JS per frame.
+   * ---------------------------------------------------------------- */
+  .reveal {
+    opacity: 0;
+    transform: translate3d(var(--reveal-x, 0px), var(--reveal-y, 30px), 0);
+    transition:
+      opacity var(--reveal-duration, 0.7s) cubic-bezier(0.25, 0.1, 0.25, 1)
+        var(--reveal-delay, 0s),
+      transform var(--reveal-duration, 0.7s) cubic-bezier(0.25, 0.1, 0.25, 1)
+        var(--reveal-delay, 0s);
+  }
+
+  .reveal[data-revealed='true'] {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+
+  /* ---------------------------------------------------------------- *
+   * Marquee isolation — keeps the very wide, permanently animating
+   * rows from invalidating layout/paint for the rest of the document.
+   * Purely a paint optimisation: the rendered result is identical.
+   * ---------------------------------------------------------------- */
+  .marquee-scope {
+    contain: layout paint style;
+  }
+
+  /* ---------------------------------------------------------------- *
+   * Scroll-scrubbed text reveal. One rAF-throttled scroll listener
+   * writes `--p` on the paragraph; each word derives its own opacity in
+   * CSS with the same curve the old per-character code used:
+   *   opacity = 0.2 + 0.8 * clamp(0, p * n - i, 1)
+   * (was: 1 framer-motion span + 1 MotionValue per character)
+   * ---------------------------------------------------------------- */
+  .animated-text {
+    --p: 0;
+  }
+
+  .animated-text__word {
+    display: inline-block;
+    opacity: calc(0.2 + 0.8 * clamp(0, var(--p) * var(--n, 1) - var(--i, 0), 1));
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animated-text__word {
+      opacity: 1;
+    }
+  }
+  /* ---------------------------------------------------------------- *
+   * Overlay / lightbox transitions (replaces AnimatePresence).
+   * `data-closing` replays the same fade in reverse for the exit.
+   * ---------------------------------------------------------------- */
+  .lightbox-overlay {
+    animation: lightbox-fade 0.25s ease-out both;
+  }
+
+  .lightbox-overlay[data-closing='true'] {
+    animation: lightbox-fade 0.18s ease-in reverse both;
+  }
+
+  .lightbox-figure {
+    animation: lightbox-image 0.3s cubic-bezier(0.25, 0.1, 0.25, 1) both;
+  }
+
+  /* Reuses the lightbox fade so the mobile menu animates in on every open. */
+  .mobile-menu-panel {
+    animation: lightbox-fade 0.2s ease-out both;
+  }
+
+  /* Small scale-in used by the contact form success state. */
+  .pop-in {
+    animation: lightbox-image 0.3s cubic-bezier(0.25, 0.1, 0.25, 1) both;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
   [style*='marquee-'] {
     animation: none !important;
   }
+
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  .animate-float,
+  .animate-float-alt,
+  .animate-scroll-cue,
+  .animate-ping {
+    animation: none !important;
+  }
 }
+

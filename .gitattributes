@@ -1,2 +1,23 @@
-# Auto detect text files and perform LF normalization
-* text=auto
+# Normalise every text file to LF.
+#
+# This project previously ended up with files containing a mix of CRLF and LF,
+# which silently broke scripted edits against them. Forcing LF in the working
+# tree removes that class of problem entirely.
+* text=auto eol=lf
+
+# Binaries must never be normalised.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.avif binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.pdf binary
+
+# Generated brand assets — noisy diffs, no review value.
+public/og-image.jpg -diff
+public/apple-touch-icon.png -diff
+

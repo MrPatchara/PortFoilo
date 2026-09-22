@@ -1,7 +1,7 @@
 import { GraduationCap, Briefcase } from 'lucide-react'
 import FadeIn from '../components/FadeIn'
+import SectionHeading from '../components/SectionHeading'
 
-// TODO: replace mock data with real education & work history
 const EDUCATION = [
   {
     period: '2023 — 2026',
@@ -139,13 +139,22 @@ function Column({
   )
 }
 
-export default function ServicesSection() {
+export default function EducationSection() {
   return (
     <section
       id="education"
       className="px-4 sm:px-8 md:px-10 py-12 sm:py-24 md:py-32 rounded-t-[28px] sm:rounded-t-[50px] md:rounded-t-[60px]"
       style={{ background: '#FFFFFF' }}
     >
+      <SectionHeading
+        index="02"
+        title="Education"
+        eyebrow="Degrees & Roles"
+        variant="outline"
+        fontSize="clamp(2rem, 7vw, 96px)"
+        className="mb-8 sm:mb-14"
+      />
+
       <div className="max-w-6xl mx-auto grid gap-4 sm:gap-6 md:grid-cols-2 md:gap-8">
         <Column
           icon={<GraduationCap size={26} strokeWidth={2} />}

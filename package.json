@@ -1,15 +1,21 @@
 {
-  "name": "jack-3d-creator-portfolio",
+  "name": "patchara-portfolio",
   "private": true,
   "version": "1.0.0",
   "type": "module",
   "engines": {
-    "node": ">=18"
+    "node": ">=18.17.0"
   },
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview"
+    "build": "npm run typecheck && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.node.json --noEmit",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "icons": "node scripts/generate-icons.mjs",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "framer-motion": "^12.23.24",
@@ -18,14 +24,23 @@
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.5",
     "@types/node": "^26.6.2",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",
     "autoprefixer": "^10.4.19",
+    "eslint": "^9.39.5",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.26",
+    "globals": "^17.12.0",
     "postcss": "^8.4.38",
+    "prettier": "^3.9.8",
     "tailwindcss": "^3.4.1",
     "typescript": "^5.4.5",
-    "vite": "^5.4.0"
+    "typescript-eslint": "^8.70.1",
+    "vite": "^5.4.0",
+    "vite-imagetools": "^7.1.1",
+    "vitest": "^3.2.7"
   }
 }

@@ -1,0 +1,9 @@
+dist
+node_modules
+package-lock.json
+public/og-image.jpg
+public/apple-touch-icon.png
+src/Pic_cer
+src/Pic_main
+src/Pic_proj
+src/assets

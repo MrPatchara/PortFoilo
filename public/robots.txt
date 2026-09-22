@@ -1,0 +1,7 @@
+# Allow every crawler — this is a public portfolio.
+User-agent: *
+Allow: /
+
+# TODO: once you know the production domain, uncomment and point it at your
+# absolute sitemap URL, then update the <loc> inside public/sitemap.xml.
+# Sitemap: https://your-domain.example/sitemap.xml

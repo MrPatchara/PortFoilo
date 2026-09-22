@@ -1,5 +1,5 @@
-import { motion } from 'framer-motion'
-import type { ReactNode, CSSProperties } from 'react'
+import { useEffect, useRef, type CSSProperties, type ReactNode } from 'react'
+import { observeReveal } from '../lib/reveal'
 
 interface FadeInProps {
   children: ReactNode
@@ -11,6 +11,14 @@ interface FadeInProps {
   style?: CSSProperties
 }
 
+/**
+ * Scroll-triggered fade/slide reveal.
+ *
+ * Same public API as before, but the animation now runs as a pure CSS
+ * transition driven by one shared IntersectionObserver (src/lib/reveal.ts)
+ * instead of mounting a framer-motion instance per element. This removes
+ * framer-motion from the initial JS payload entirely.
+ */
 export default function FadeIn({
   children,
   delay = 0,
@@ -20,16 +28,25 @@ export default function FadeIn({
   className,
   style,
 }: FadeInProps) {
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => observeReveal(ref.current), [])
+
+  const revealVars: Record<string, string> = {
+    '--reveal-x': `${x}px`,
+    '--reveal-y': `${y}px`,
+    '--reveal-delay': `${delay}s`,
+    '--reveal-duration': `${duration}s`,
+  }
+
   return (
-    <motion.div
-      initial={{ opacity: 0, x, y }}
-      whileInView={{ opacity: 1, x: 0, y: 0 }}
-      viewport={{ once: true, margin: '50px', amount: 0 }}
-      transition={{ delay, duration, ease: [0.25, 0.1, 0.25, 1] }}
-      className={className}
-      style={style}
+    <div
+      ref={ref}
+      className={className ? `reveal ${className}` : 'reveal'}
+      style={{ ...revealVars, ...style } as CSSProperties}
     >
       {children}
-    </motion.div>
+    </div>
   )
 }
+

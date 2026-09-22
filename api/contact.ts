@@ -1,21 +1,54 @@
-import type { IncomingMessage, ServerResponse } from 'node:http';
+import type { IncomingMessage, ServerResponse } from 'node:http'
+import { checkRateLimit } from './_lib/rateLimit'
+import { isHoneypotFilled, validateContactPayload } from './_lib/validation'
 
-type ContactRequest = IncomingMessage & { body?: unknown };
+type ContactRequest = IncomingMessage & { body?: unknown }
+
+/** Hard cap on the request body — the form never legitimately exceeds ~6 KB. */
+const MAX_BODY_BYTES = 10_000
+const RESEND_TIMEOUT_MS = 10_000
+const DEFAULT_TO = 'patcharaalumaree@gmail.com'
 
 const sendJson = (res: ServerResponse, status: number, body: Record<string, unknown>) => {
-  res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8' });
-  res.end(JSON.stringify(body));
-};
+  res.writeHead(status, {
+    'Content-Type': 'application/json; charset=utf-8',
+    'Cache-Control': 'no-store',
+  })
+  res.end(JSON.stringify(body))
+}
 
+/**
+ * Reads the raw request body, aborting as soon as the size cap is exceeded.
+ * Previously this accumulated an unbounded string, so a single oversized POST
+ * could exhaust the function's memory.
+ */
 const readBody = (req: IncomingMessage): Promise<string> =>
   new Promise((resolve, reject) => {
-    let raw = '';
+    let raw = ''
+    let size = 0
+
     req.on('data', (chunk: Buffer) => {
-      raw += chunk.toString();
-    });
-    req.on('end', () => resolve(raw));
-    req.on('error', reject);
-  });
+      size += chunk.length
+      if (size > MAX_BODY_BYTES) {
+        reject(new Error('Payload too large'))
+        req.destroy()
+        return
+      }
+      raw += chunk.toString()
+    })
+
+    req.on('end', () => resolve(raw))
+    req.on('error', reject)
+  })
+
+const clientIp = (req: IncomingMessage): string => {
+  const forwarded = req.headers['x-forwarded-for']
+  if (typeof forwarded === 'string' && forwarded.length > 0) {
+    return forwarded.split(',')[0].trim()
+  }
+  if (Array.isArray(forwarded) && forwarded.length > 0) return forwarded[0]
+  return req.socket?.remoteAddress ?? 'unknown'
+}
 
 const escapeHtml = (value: string) =>
   value
@@ -23,7 +56,7 @@ const escapeHtml = (value: string) =>
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
+    .replace(/'/g, '&#39;')
 
 const fieldRow = (label: string, value: string, preserveBreaks = false) => `
   <tr>
@@ -33,7 +66,7 @@ const fieldRow = (label: string, value: string, preserveBreaks = false) => `
         preserveBreaks ? escapeHtml(value).replace(/\n/g, '<br/>') : escapeHtml(value)
       }</p>
     </td>
-  </tr>`;
+  </tr>`
 
 const buildEmailHtml = (fields: { name: string; email: string; subject: string; message: string }) => `
 <!doctype html>
@@ -60,80 +93,116 @@ const buildEmailHtml = (fields: { name: string; email: string; subject: string; 
       </table>
     </div>
   </body>
-</html>`;
+</html>`
 
 export default async function handler(req: ContactRequest, res: ServerResponse) {
   if (req.method !== 'POST') {
-    sendJson(res, 405, { success: false, error: 'Method not allowed' });
-    return;
+    res.setHeader('Allow', 'POST')
+    sendJson(res, 405, { success: false, error: 'Method not allowed' })
+    return
   }
 
-  let data: Record<string, string>;
+  // --- Parse the body -------------------------------------------------------
+  let raw: unknown
   if (req.body && typeof req.body === 'object') {
-    data = req.body as Record<string, string>;
+    raw = req.body
   } else {
     try {
-      data = JSON.parse((await readBody(req)) || '{}');
-    } catch {
-      sendJson(res, 400, { success: false, error: 'Invalid JSON body' });
-      return;
+      raw = JSON.parse((await readBody(req)) || '{}')
+    } catch (error) {
+      const tooLarge = error instanceof Error && error.message === 'Payload too large'
+      sendJson(res, tooLarge ? 413 : 400, {
+        success: false,
+        error: tooLarge ? 'Payload too large' : 'Invalid JSON body',
+      })
+      return
     }
   }
 
-  const name = (data.name ?? '').trim();
-  const email = (data.email ?? '').trim();
-  const subjectText = (data.subject ?? '').trim();
-  const message = (data.message ?? '').trim();
-  const website = (data.website ?? '').trim();
-
-  if (website) {
-    sendJson(res, 200, { success: true });
-    return;
+  // --- Spam gates -----------------------------------------------------------
+  // Honeypot: answer with success so bots cannot tell they were filtered.
+  if (isHoneypotFilled(raw)) {
+    sendJson(res, 200, { success: true })
+    return
   }
 
-  if (!email || !message || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    sendJson(res, 400, { success: false, error: 'Missing required fields' });
-    return;
+  const limit = checkRateLimit(clientIp(req))
+  if (!limit.allowed) {
+    res.setHeader('Retry-After', String(limit.retryAfterSeconds))
+    sendJson(res, 429, {
+      success: false,
+      error: 'Too many messages sent. Please try again in a few minutes.',
+    })
+    return
   }
 
-  const apiKey = process.env.RESEND_API_KEY;
+  const validated = validateContactPayload(raw)
+  if (!validated.ok) {
+    sendJson(res, 400, { success: false, error: validated.error })
+    return
+  }
+  const { name, email, subject: subjectText, message } = validated.value
+
+  // --- Configuration --------------------------------------------------------
+  const apiKey = process.env.RESEND_API_KEY
   if (!apiKey) {
-    sendJson(res, 500, { success: false, error: 'Server not configured' });
-    return;
+    sendJson(res, 500, { success: false, error: 'Server not configured' })
+    return
   }
 
-  const from = process.env.CONTACT_FROM || 'Portfolio <onboarding@resend.dev>';
+  const recipients = (process.env.CONTACT_TO || DEFAULT_TO)
+    .split(',')
+    .map((value) => value.trim())
+    .filter(Boolean)
+
+  const from = process.env.CONTACT_FROM || 'Portfolio <onboarding@resend.dev>'
 
   const subject = subjectText
     ? `[Portfolio] ${subjectText} — จาก ${name || 'ผู้ติดต่อ'}`
-    : `[Portfolio] ข้อความใหม่จาก ${name || 'ผู้ติดต่อ'}`;
+    : `[Portfolio] ข้อความใหม่จาก ${name || 'ผู้ติดต่อ'}`
 
-  const response = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      from,
-      to: ['patcharaalumaree@gmail.com'],
-      reply_to: email,
-      subject,
-      html: buildEmailHtml({ name, email, subject: subjectText, message }),
-      text: `ชื่อ: ${name || '-'}\nอีเมล: ${email}\nหัวข้อ: ${subjectText || '-'}\n\n${message}`
+  // --- Send -----------------------------------------------------------------
+  const controller = new AbortController()
+  const timeout = setTimeout(() => controller.abort(), RESEND_TIMEOUT_MS)
+
+  try {
+    const response = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from,
+        to: recipients,
+        reply_to: email,
+        subject,
+        html: buildEmailHtml({ name, email, subject: subjectText, message }),
+        text: `ชื่อ: ${name || '-'}\nอีเมล: ${email}\nหัวข้อ: ${subjectText || '-'}\n\n${message}`,
+      }),
+      signal: controller.signal,
     })
-  });
 
-  const result = await response.json().catch(() => null);
+    const result = await response.json().catch(() => null)
 
-  if (!response.ok) {
-    sendJson(res, 502, {
+    if (!response.ok) {
+      sendJson(res, 502, {
+        success: false,
+        error: 'Failed to send message',
+        detail: result?.message ?? result?.name ?? `HTTP ${response.status}`,
+      })
+      return
+    }
+
+    sendJson(res, 200, { success: true })
+  } catch {
+    // AbortError (our timeout) or a network failure — never leave the form
+    // hanging without an answer.
+    sendJson(res, 504, {
       success: false,
-      error: 'Failed to send message',
-      detail: result?.message ?? result?.name ?? `HTTP ${response.status}`
-    });
-    return;
+      error: 'The email service did not respond. Please try again.',
+    })
+  } finally {
+    clearTimeout(timeout)
   }
-
-  sendJson(res, 200, { success: true });
 }

@@ -1,9 +1,23 @@
 import { useRef, useState, type FormEvent } from 'react'
-import { motion } from 'framer-motion'
-import { Mail, Send, Loader2, CheckCircle2, AlertCircle, ArrowUpRight, Github, Phone } from 'lucide-react'
+import {
+  Mail,
+  Send,
+  Loader2,
+  CheckCircle2,
+  AlertCircle,
+  ArrowUpRight,
+  Github,
+  Phone,
+  Linkedin,
+} from 'lucide-react'
 import FadeIn from '../components/FadeIn'
+import CvButton from '../components/CvButton'
+import { SITE } from '../data/site'
 
 type Status = 'idle' | 'sending' | 'success' | 'error'
+
+/** Mirrors the server-side limits in api/contact.ts. */
+const MAX_LENGTH = { name: 80, email: 254, subject: 120, message: 5000 }
 
 const inputClass =
   'w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-sm sm:text-base text-[#D7E2EA] placeholder:text-[#D7E2EA]/30 outline-none transition focus:border-[#B600A8] focus:ring-2 focus:ring-[#B600A8]/30'
@@ -49,6 +63,11 @@ export default function ContactSection() {
         {/* Left: heading + direct email */}
         <div>
           <FadeIn delay={0} y={40} duration={0.7}>
+            <span className="mb-5 flex items-center gap-3 text-[10px] sm:text-xs font-medium uppercase tracking-[0.35em] text-[#D7E2EA]/45">
+              <span className="text-[#B600A8] font-semibold">05</span>
+              <span aria-hidden className="h-px w-6 sm:w-10 bg-[#D7E2EA]/25" />
+              Contact
+            </span>
             <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-[11px] sm:text-xs font-medium uppercase tracking-widest text-[#D7E2EA]">
               <span className="relative flex h-2 w-2">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
@@ -74,7 +93,7 @@ export default function ContactSection() {
           <FadeIn delay={0.15} y={24} duration={0.7}>
             <div className="mt-8 flex flex-col gap-3 sm:gap-4 max-w-md">
             <a
-              href="mailto:patcharaalumaree@gmail.com"
+              href={`mailto:${SITE.email}`}
               className="group flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.04] px-5 py-4 hover:border-[#B600A8]/60 hover:bg-white/[0.07] transition-colors"
             >
               <span className="flex items-center justify-center w-11 h-11 rounded-xl bg-gradient-to-br from-[#B600A8] to-[#BE4C00] text-white shrink-0">
@@ -85,7 +104,7 @@ export default function ContactSection() {
                   Email me directly
                 </span>
                 <span className="text-sm sm:text-base text-white font-medium break-all">
-                  patcharaalumaree@gmail.com
+                  {SITE.email}
                 </span>
               </span>
               <ArrowUpRight
@@ -96,7 +115,7 @@ export default function ContactSection() {
 
             <div className="grid sm:grid-cols-2 gap-3 sm:gap-4">
               <a
-                href="https://github.com/MrPatchara"
+                href={SITE.github}
                 target="_blank"
                 rel="noreferrer"
                 className="group flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.04] px-5 py-4 hover:border-[#B600A8]/60 hover:bg-white/[0.07] transition-colors"
@@ -109,7 +128,7 @@ export default function ContactSection() {
                     GitHub
                   </span>
                   <span className="text-sm text-white font-medium truncate">
-                    @MrPatchara
+                    {SITE.githubHandle}
                   </span>
                 </span>
                 <ArrowUpRight
@@ -118,8 +137,33 @@ export default function ContactSection() {
                 />
               </a>
 
+              {SITE.linkedin ? (
+                <a
+                  href={SITE.linkedin}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="group flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.04] px-5 py-4 hover:border-[#B600A8]/60 hover:bg-white/[0.07] transition-colors"
+                >
+                  <span className="flex items-center justify-center w-11 h-11 rounded-xl bg-[#0A66C2] text-white shrink-0">
+                    <Linkedin size={20} />
+                  </span>
+                  <span className="flex flex-col min-w-0">
+                    <span className="text-[11px] uppercase tracking-widest text-[#D7E2EA]/50 font-medium">
+                      LinkedIn
+                    </span>
+                    <span className="text-sm text-white font-medium truncate">
+                      Let&apos;s connect
+                    </span>
+                  </span>
+                  <ArrowUpRight
+                    size={18}
+                    className="text-[#D7E2EA]/40 group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all ml-auto shrink-0"
+                  />
+                </a>
+              ) : null}
+
               <a
-                href="tel:+66960614238"
+                href={`tel:${SITE.phone}`}
                 className="group flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.04] px-5 py-4 hover:border-[#B600A8]/60 hover:bg-white/[0.07] transition-colors"
               >
                 <span className="flex items-center justify-center w-11 h-11 rounded-xl bg-gradient-to-br from-[#7621B0] to-[#B600A8] text-white shrink-0">
@@ -130,7 +174,7 @@ export default function ContactSection() {
                     Phone
                   </span>
                   <span className="text-sm text-white font-medium">
-                    +66 96 061 4238
+                    {SITE.phoneDisplay}
                   </span>
                 </span>
                 <ArrowUpRight
@@ -139,6 +183,8 @@ export default function ContactSection() {
                 />
               </a>
             </div>
+
+            <CvButton className="mt-4 w-full justify-center sm:w-auto" />
             </div>
           </FadeIn>
         </div>
@@ -147,11 +193,7 @@ export default function ContactSection() {
         <FadeIn delay={0.1} y={40} duration={0.7}>
           <div className="rounded-[24px] sm:rounded-[28px] border border-white/10 bg-white/[0.04] backdrop-blur p-5 sm:p-8">
             {status === 'success' ? (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="flex flex-col items-center text-center py-10"
-              >
+              <div role="status" className="pop-in flex flex-col items-center text-center py-10">
                 <span className="flex items-center justify-center w-16 h-16 rounded-full bg-emerald-400/15 text-emerald-400 mb-5">
                   <CheckCircle2 size={36} />
                 </span>
@@ -167,15 +209,27 @@ export default function ContactSection() {
                 >
                   Send another
                 </button>
-              </motion.div>
+              </div>
             ) : (
-              <form ref={formRef} onSubmit={handleSubmit} className="flex flex-col gap-3 sm:gap-5">
+              <form
+                ref={formRef}
+                onSubmit={handleSubmit}
+                aria-busy={status === 'sending'}
+                className="flex flex-col gap-3 sm:gap-5"
+              >
                 <div className="grid sm:grid-cols-2 gap-4 sm:gap-5">
                   <label className="flex flex-col gap-2">
                     <span className="text-[11px] sm:text-xs font-medium uppercase tracking-widest text-[#D7E2EA]/60">
                       Name
                     </span>
-                    <input name="name" type="text" placeholder="Your name" autoComplete="name" className={inputClass} />
+                    <input
+                      name="name"
+                      type="text"
+                      maxLength={MAX_LENGTH.name}
+                      placeholder="Your name"
+                      autoComplete="name"
+                      className={inputClass}
+                    />
                   </label>
                   <label className="flex flex-col gap-2">
                     <span className="text-[11px] sm:text-xs font-medium uppercase tracking-widest text-[#D7E2EA]/60">
@@ -185,6 +239,7 @@ export default function ContactSection() {
                       name="email"
                       type="email"
                       required
+                      maxLength={MAX_LENGTH.email}
                       placeholder="you@example.com"
                       autoComplete="email"
                       className={inputClass}
@@ -196,7 +251,13 @@ export default function ContactSection() {
                   <span className="text-[11px] sm:text-xs font-medium uppercase tracking-widest text-[#D7E2EA]/60">
                     Subject
                   </span>
-                  <input name="subject" type="text" placeholder="What's this about?" className={inputClass} />
+                  <input
+                    name="subject"
+                    type="text"
+                    maxLength={MAX_LENGTH.subject}
+                    placeholder="What's this about?"
+                    className={inputClass}
+                  />
                 </label>
 
                 <label className="flex flex-col gap-2">
@@ -207,6 +268,7 @@ export default function ContactSection() {
                     name="message"
                     required
                     rows={5}
+                    maxLength={MAX_LENGTH.message}
                     placeholder="Tell me about your project..."
                     className={`${inputClass} resize-y min-h-[120px]`}
                   />
@@ -223,7 +285,10 @@ export default function ContactSection() {
                 />
 
                 {status === 'error' && (
-                  <p className="flex items-start gap-2 rounded-xl border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+                  <p
+                    role="alert"
+                    className="flex items-start gap-2 rounded-xl border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-300"
+                  >
                     <AlertCircle size={18} className="shrink-0 mt-0.5" />
                     {errorMsg}
                   </p>
@@ -232,15 +297,7 @@ export default function ContactSection() {
                 <button
                   type="submit"
                   disabled={status === 'sending'}
-                  className="mt-1 inline-flex items-center justify-center gap-2 rounded-full text-white font-medium uppercase tracking-widest text-sm sm:text-base px-8 py-3.5 sm:py-4 disabled:opacity-60 disabled:cursor-wait"
-                  style={{
-                    background:
-                      'linear-gradient(123deg, #18011F 7%, #B600A8 37%, #7621B0 72%, #BE4C00 100%)',
-                    boxShadow:
-                      '0px 4px 4px rgba(181, 1, 167, 0.25), inset 4px 4px 12px #7721B1',
-                    outline: '2px solid white',
-                    outlineOffset: '-3px',
-                  }}
+                  className="gradient-cta mt-1 inline-flex items-center justify-center gap-2 rounded-full text-white font-medium uppercase tracking-widest text-sm sm:text-base px-8 py-3.5 sm:py-4 transition disabled:opacity-60 disabled:cursor-wait"
                 >
                   {status === 'sending' ? (
                     <>
@@ -263,7 +320,7 @@ export default function ContactSection() {
       {/* Footer */}
       <footer className="max-w-6xl mx-auto mt-10 sm:mt-20 pt-6 sm:pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-3">
         <p className="text-[#D7E2EA]/40 font-light text-xs sm:text-sm uppercase tracking-widest">
-          © {new Date().getFullYear()} Patchara Al-umaree
+          © {new Date().getFullYear()} {SITE.name}
         </p>
         <p className="text-[#D7E2EA]/40 font-light text-xs sm:text-sm uppercase tracking-widest">
           Engineering × Sports Science

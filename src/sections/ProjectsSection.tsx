@@ -1,15 +1,25 @@
 import { useRef } from 'react'
 import { motion, useScroll, useTransform, type MotionValue } from 'framer-motion'
-import FadeIn from '../components/FadeIn'
-import p01a from '../Pic_proj/01/port0-6.jpg'
-import p01b from '../Pic_proj/01/port0-5.jpg'
-import p01c from '../Pic_proj/01/port0.jpg'
-import p02a from '../Pic_proj/02/326827_0.jpg'
-import p02b from '../Pic_proj/02/326828_0.jpg'
-import p02c from '../Pic_proj/02/326829_0.jpg'
-import p03a from '../Pic_proj/03/389763_0.jpg'
-import p03b from '../Pic_proj/03/cir11.jpg'
-import p03c from '../Pic_proj/03/408642_0.jpg'
+import SectionHeading from '../components/SectionHeading'
+import { srcFromSrcset } from '../lib/srcset'
+
+// 25 files worth of award photos used to ship at full resolution (1.64 MB).
+// These imports emit two resized WebP variants each at build time.
+import p01a from '../Pic_proj/01/port0-6.jpg?w=480;960&format=webp&as=srcset'
+import p01b from '../Pic_proj/01/port0-5.jpg?w=480;960&format=webp&as=srcset'
+// Byte-identical to the copy in Pic_main (verified blob hash) — one file serves both rows.
+import p01c from '../Pic_main/port0.jpg?w=480;960&format=webp&as=srcset'
+import p02a from '../Pic_proj/02/326827_0.jpg?w=480;960&format=webp&as=srcset'
+import p02b from '../Pic_proj/02/326828_0.jpg?w=480;960&format=webp&as=srcset'
+import p02c from '../Pic_proj/02/326829_0.jpg?w=480;960&format=webp&as=srcset'
+import p03a from '../Pic_proj/03/389763_0.jpg?w=480;960&format=webp&as=srcset'
+import p03b from '../Pic_proj/03/cir11.jpg?w=480;960&format=webp&as=srcset'
+import p03c from '../Pic_proj/03/408642_0.jpg?w=480;960&format=webp&as=srcset'
+
+/** The narrow left column renders around 420px wide on desktop, ~40vw on phones. */
+const COL1_SIZES = '(min-width: 768px) 420px, 40vw'
+/** The wide right column renders around 640px wide on desktop, ~60vw on phones. */
+const COL2_SIZES = '(min-width: 768px) 640px, 60vw'
 
 interface Project {
   number: string
@@ -68,7 +78,8 @@ function ProjectCard({
       className={
         isLast
           ? 'h-auto flex items-start justify-center md:static'
-          : 'h-auto md:h-[140vh] flex items-start justify-center md:sticky md:top-4'
+          : // 140vh per card meant 420vh of scrolling for three projects.
+            'h-auto md:h-[110vh] flex items-start justify-center md:sticky md:top-4'
       }
     >
       <motion.div
@@ -82,9 +93,7 @@ function ProjectCard({
           {/* Top row */}
           <div className="flex justify-between items-start gap-3 sm:gap-4 mb-3 sm:mb-6">
             <div className="flex items-start gap-4 sm:gap-8">
-              <span
-                className="font-black leading-none text-[#D7E2EA] text-[clamp(3rem,10vw,140px)] md:text-[clamp(2.5rem,10vh,120px)]"
-              >
+              <span className="font-black leading-none text-[#D7E2EA] text-[clamp(3rem,10vw,140px)] md:text-[clamp(2.5rem,10vh,120px)]">
                 {project.number}
               </span>
               <div className="flex flex-col gap-1 sm:gap-2 pt-1 sm:pt-3">
@@ -105,23 +114,32 @@ function ProjectCard({
           <div className="flex gap-2 sm:gap-4">
             <div className="w-[40%] flex flex-col gap-2 sm:gap-4">
               <img
-                src={project.col1Image1}
+                src={srcFromSrcset(project.col1Image1)}
+                srcSet={project.col1Image1}
+                sizes={COL1_SIZES}
                 alt={`${project.name} preview 1`}
                 loading="lazy"
+                decoding="async"
                 className="w-full object-cover rounded-[20px] sm:rounded-[50px] md:rounded-[60px] h-[clamp(110px,16vw,230px)] md:h-[clamp(150px,22vh,210px)]"
               />
               <img
-                src={project.col1Image2}
+                src={srcFromSrcset(project.col1Image2)}
+                srcSet={project.col1Image2}
+                sizes={COL1_SIZES}
                 alt={`${project.name} preview 2`}
                 loading="lazy"
+                decoding="async"
                 className="w-full object-cover rounded-[20px] sm:rounded-[50px] md:rounded-[60px] h-[clamp(130px,22vw,340px)] md:h-[clamp(180px,30vh,300px)]"
               />
             </div>
             <div className="w-[60%]">
               <img
-                src={project.col2Image}
+                src={srcFromSrcset(project.col2Image)}
+                srcSet={project.col2Image}
+                sizes={COL2_SIZES}
                 alt={`${project.name} preview 3`}
                 loading="lazy"
+                decoding="async"
                 className="w-full object-cover rounded-[20px] sm:rounded-[50px] md:rounded-[60px] h-[clamp(248px,38vw,586px)] md:h-[calc(clamp(150px,22vh,210px)+clamp(180px,30vh,300px)+16px)]"
               />
             </div>
@@ -145,14 +163,12 @@ export default function ProjectsSection() {
       className="rounded-t-[28px] sm:rounded-t-[50px] md:rounded-t-[60px] -mt-6 sm:-mt-12 md:-mt-14 relative z-10 px-4 sm:px-8 md:px-10 pt-12 sm:pt-24 pb-10 sm:pb-16"
       style={{ background: '#0C0C0C' }}
     >
-      <FadeIn delay={0} y={40} duration={0.7}>
-        <h2
-          className="hero-heading font-black uppercase leading-none tracking-tight text-center mb-8 sm:mb-20"
-          style={{ fontSize: 'clamp(3rem, 12vw, 160px)' }}
-        >
-          Project
-        </h2>
-      </FadeIn>
+      <SectionHeading
+        index="03"
+        title="Projects"
+        eyebrow="Award-winning work"
+        className="mb-8 sm:mb-20"
+      />
 
       <div ref={containerRef} className="relative flex flex-col gap-5 md:gap-0">
         {PROJECTS.map((project, i) => (

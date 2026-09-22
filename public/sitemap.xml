@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  TODO: replace the placeholder <loc> below with your real production URL, then
+  uncomment the `Sitemap:` line in public/robots.txt.
+
+  This file is deliberately not referenced from robots.txt yet, so a stale
+  placeholder URL cannot be picked up by crawlers in the meantime.
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://YOUR-DOMAIN/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>
