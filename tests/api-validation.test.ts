@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { FIELD_LIMITS, isHoneypotFilled, validateContactPayload } from './validation'
+import { FIELD_LIMITS, isHoneypotFilled, validateContactPayload } from '../api/contact'
 
 const VALID = {
   name: 'Patchara',

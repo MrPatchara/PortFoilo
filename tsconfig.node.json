@@ -15,6 +15,6 @@
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["vite.config.ts", "vitest.config.ts", "api/**/*.ts"]
+  "include": ["vite.config.ts", "vitest.config.ts", "api/**/*.ts", "tests/**/*.test.ts"]
 }
 

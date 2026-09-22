@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { checkRateLimit } from './rateLimit'
+import { checkRateLimit } from '../api/contact'
 
 const WINDOW_STEP_MS = 11 * 60 * 1000
 
